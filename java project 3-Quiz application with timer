@@ -1,10 +1,10 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
+import java.util.Scanner;  
 import java.util.Timer;
 import java.util.TimerTask;
 
-// Class to represent a quiz question
+
 class Question {
     private String questionText;
     private List<String> options;
@@ -16,7 +16,7 @@ class Question {
         this.correctAnswerIndex = correctAnswerIndex;
     }
 
-    // Display the question and options
+   
     public void displayQuestion() {
         System.out.println("\n" + questionText);
         for (int i = 0; i < options.size(); i++) {
@@ -24,13 +24,13 @@ class Question {
         }
     }
 
-    // Check if the answer is correct
+  
     public boolean checkAnswer(int answer) {
         return answer - 1 == correctAnswerIndex;
     }
 }
 
-// Class to manage the quiz logic
+
 class Quiz {
     private List<Question> questions;
     private int score;
@@ -45,7 +45,7 @@ class Quiz {
         initializeQuestions();
     }
 
-    // Initialize the quiz with some questions
+    
     private void initializeQuestions() {
         List<String> options1 = List.of("Java", "Python", "C++", "JavaScript");
         List<String> options2 = List.of("Object Oriented", "Procedural", "Functional", "Declarative");
@@ -56,7 +56,7 @@ class Quiz {
         questions.add(new Question("Who discovered gravity?", options3, 2));
     }
 
-    // Start the quiz
+
     public void startQuiz() {
         System.out.println("Welcome to the Quiz! You have 10 seconds to answer each question.");
         for (int i = 0; i < questions.size(); i++) {
@@ -65,7 +65,7 @@ class Quiz {
         displayResults();
     }
 
-    // Ask a question with a timer and record the result
+   
     private void askQuestionWithTimer(Question question, int questionNumber) {
         Timer timer = new Timer();
         TimerTask task = new TimerTask() {
@@ -107,7 +107,7 @@ class Quiz {
         }
     }
 
-    // Display the final score and correct/incorrect answers
+    
     private void displayResults() {
         System.out.println("\nQuiz over! Your final score is: " + score + "/" + questions.size());
         System.out.println("Summary:");
@@ -118,7 +118,7 @@ class Quiz {
     }
 }
 
-// Main class to run the program
+
 public class QuizApplication {
     public static void main(String[] args) {
         // Create a new Quiz object and start it
