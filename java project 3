@@ -1,1 +1,129 @@
-3rd project
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
+
+// Class to represent a quiz question
+class Question {
+    private String questionText;
+    private List<String> options;
+    private int correctAnswerIndex;
+
+    public Question(String questionText, List<String> options, int correctAnswerIndex) {
+        this.questionText = questionText;
+        this.options = options;
+        this.correctAnswerIndex = correctAnswerIndex;
+    }
+
+    // Display the question and options
+    public void displayQuestion() {
+        System.out.println("\n" + questionText);
+        for (int i = 0; i < options.size(); i++) {
+            System.out.println((i + 1) + ". " + options.get(i));
+        }
+    }
+
+    // Check if the answer is correct
+    public boolean checkAnswer(int answer) {
+        return answer - 1 == correctAnswerIndex;
+    }
+}
+
+// Class to manage the quiz logic
+class Quiz {
+    private List<Question> questions;
+    private int score;
+    private List<Boolean> results; // Stores correct/incorrect for each question
+    private Scanner scanner;
+
+    public Quiz() {
+        questions = new ArrayList<>();
+        score = 0;
+        results = new ArrayList<>();
+        scanner = new Scanner(System.in);
+        initializeQuestions();
+    }
+
+    // Initialize the quiz with some questions
+    private void initializeQuestions() {
+        List<String> options1 = List.of("Java", "Python", "C++", "JavaScript");
+        List<String> options2 = List.of("Object Oriented", "Procedural", "Functional", "Declarative");
+        List<String> options3 = List.of("Tesla", "Einstein", "Newton", "Edison");
+
+        questions.add(new Question("What is the most popular programming language?", options1, 0));
+        questions.add(new Question("Which paradigm does Java follow?", options2, 0));
+        questions.add(new Question("Who discovered gravity?", options3, 2));
+    }
+
+    // Start the quiz
+    public void startQuiz() {
+        System.out.println("Welcome to the Quiz! You have 10 seconds to answer each question.");
+        for (int i = 0; i < questions.size(); i++) {
+            askQuestionWithTimer(questions.get(i), i + 1);
+        }
+        displayResults();
+    }
+
+    // Ask a question with a timer and record the result
+    private void askQuestionWithTimer(Question question, int questionNumber) {
+        Timer timer = new Timer();
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                System.out.println("\nTime is up!");
+                synchronized (scanner) {
+                    scanner.notify();
+                }
+            }
+        };
+        timer.schedule(task, 10000); // 10-second timer
+
+        question.displayQuestion();
+
+        synchronized (scanner) {
+            try {
+                System.out.print("Your answer (1-4): ");
+                scanner.wait(10000); // wait for user input or timer expiration
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (scanner.hasNextInt()) {
+            int answer = scanner.nextInt();
+            timer.cancel(); // Stop the timer
+            if (question.checkAnswer(answer)) {
+                System.out.println("Correct!");
+                score++;
+                results.add(true); // Mark question as correct
+            } else {
+                System.out.println("Wrong answer.");
+                results.add(false); // Mark question as incorrect
+            }
+        } else {
+            System.out.println("No answer selected.");
+            results.add(false); // Mark question as incorrect
+        }
+    }
+
+    // Display the final score and correct/incorrect answers
+    private void displayResults() {
+        System.out.println("\nQuiz over! Your final score is: " + score + "/" + questions.size());
+        System.out.println("Summary:");
+        for (int i = 0; i < questions.size(); i++) {
+            String result = results.get(i) ? "Correct" : "Incorrect";
+            System.out.println("Question " + (i + 1) + ": " + result);
+        }
+    }
+}
+
+// Main class to run the program
+public class QuizApplication {
+    public static void main(String[] args) {
+        // Create a new Quiz object and start it
+        Quiz quiz = new Quiz();
+        quiz.startQuiz();
+    }
+
+}
